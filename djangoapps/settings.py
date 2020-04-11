@@ -125,5 +125,4 @@ STATICFILES_DIRS = (
 STATIC_URL = '/static/'
 
 # debugging Admin CSS in production
-
 # STATIC_ROOT = 'static'
