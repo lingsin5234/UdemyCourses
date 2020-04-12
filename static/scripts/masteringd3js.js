@@ -116,6 +116,7 @@ d3.json("/static/data/revenues.json").then(function(data) {
 */
 
 /* ---- Second Project ---- */
+/*
 d3.json("/static/data/data.json").then(function(data) {
 
     // extract just the Countries, we can iterate the year
@@ -135,26 +136,6 @@ d3.json("/static/data/data.json").then(function(data) {
         //console.log(countriesByYear);
         return countriesByYear;
     });
-    //console.log(startYear);
-    //console.log(arrayOfYears);
-    // year index
-    var year_index = 0;
-    // start with just 1 year
-    // var newData = data[year_index];
-    //console.log(newData);
-    //console.log(d3.min(data, function(d) { return d3.min(d.countries, function(x) { return x.income; }); }));
-
-    // filter out the null pop/income/life_exp countries
-    /*var index = newData.countries.length - 1;
-    while (index != -1) {
-        d = newData.countries[index];
-        if (d.population == null || d.income == null || d.life_exp == null) {
-            //console.log(d);
-            newData.countries.splice(index,1);
-        }
-        index--;
-    }*/
-    //console.log(newData);
 
     // set transition time
     var t = d3.transition().duration(100);
@@ -205,6 +186,7 @@ d3.json("/static/data/data.json").then(function(data) {
         .attr("transform", "translate(" + width/2 + " " + (height + margin.top*2) + ")")
         .attr("text-anchor", "middle")
         .attr("font-size", "1.2em")
+        .attr("fill", "#222D8F")
         .text("GDP per Capita ($)");
 
     // Y-Axis label
@@ -212,12 +194,14 @@ d3.json("/static/data/data.json").then(function(data) {
         .attr("transform", "translate(" + -margin.right + " " + height/2 + ") rotate(-90)")
         .attr("text-anchor", "middle")
         .attr("font-size", "1.2em")
+        .attr("fill", "#222D8F")
         .text("Life Expectancy (years)");
 
     // Year label
     var year_label = yearGroup.append("text")
         .attr("transform", "translate(" + (width - margin.right) + " " + height + ")")
         .attr("text-anchor", "start")
+        .attr("fill", "#222D8F")
         .attr("font-size", "1.5em");
 
     // update Data function
@@ -269,6 +253,173 @@ d3.json("/static/data/data.json").then(function(data) {
         // once year_index reaches max, just restart!
         year_index = (year_index < data.length) ? year_index+1 : 0
         console.log(year_index, data.length);
+        // function to update the data
+        updateData(year_index);
+
+    }, 300);
+});
+*/
+
+/* ---- Second Project Enhanced ---- */
+d3.json("/static/data/data.json").then(function(data) {
+
+    // extract just the Countries, we can iterate the year
+    startYear = +d3.min(data, function(d) { return d.year; })
+    const arrayOfYears = data.map(function(year) {
+        // get all the income + life_exp is not null
+        return year.countries.filter(function(country){
+            var dataExists = (country.income && country.life_exp);
+            return dataExists;
+        }).map(function(country){
+            country.income = +country.income;
+            country.life_exp = +country.life_exp;
+            return country;
+        });
+    });
+
+    // set transition time
+    var t = d3.transition().duration(100);
+
+    // set year_index
+    var year_index = 0;
+
+    // setup group
+    var yearGroup = svg.append("g")
+        .attr("transform", "translate(" + margin.left + " " + margin.top + ")");
+
+    // X-Axis
+    var x_axis = d3.scaleLog()
+        .base(10)
+        .domain([100, 150000])
+        .range([0, width]);
+    svg.append("g")
+        .attr("transform", "translate(" + margin.left + " " + (height + margin.top) + ")")
+        .call(
+            d3.axisBottom(x_axis)
+                .tickValues([400, 4000, 40000])
+                .tickFormat(d3.format("$"))
+        );
+
+    // Y-Axis
+    var y_axis = d3.scaleLinear()
+        .domain([0, 90])
+        .range([height, 0]);
+    svg.append("g")
+        .attr("transform", "translate(" + margin.left + " " + margin.top + ")")
+        .call(d3.axisLeft(y_axis));
+
+    // Radius Scale (Population)
+    var r_scale = d3.scaleLinear()
+        .domain([0, d3.max(arrayOfYears, function(d) { return d3.max(d, function(x) { return x.population; }) })])
+        .range([5, 25]);
+
+    // Ordinal Scale (Continents)
+    var cont_scale = d3.scaleOrdinal(d3.schemeSet1);
+
+    // X-Axis Label
+    yearGroup.append("text")
+        .attr("transform", "translate(" + width/2 + " " + (height + margin.top*2) + ")")
+        .attr("text-anchor", "middle")
+        .attr("font-size", "1.2em")
+        .attr("fill", "#222D8F")
+        .text("GDP per Capita ($)");
+
+    // Y-Axis label
+    yearGroup.append("text")
+        .attr("transform", "translate(" + -margin.right + " " + height/2 + ") rotate(-90)")
+        .attr("text-anchor", "middle")
+        .attr("font-size", "1.2em")
+        .attr("fill", "#222D8F")
+        .text("Life Expectancy (years)");
+
+    // Year label
+    var year_label = yearGroup.append("text")
+        .attr("transform", "translate(" + (width - margin.right) + " " + (height - 10) + ")")
+        .attr("text-anchor", "start")
+        .attr("fill", "#222D8F")
+        .attr("font-size", "1.5em");
+
+    // Add a Continent Legend -- this one will be fixed.
+    var continents = ['americas', 'europe', 'asia', 'africa']
+    var cont_group = yearGroup.append("g")
+        .attr("transform", "translate(" + (width - margin.right) + " " + (height - 120) + ")")
+    continents.forEach(function(d,i) {
+        var group = cont_group.append("rect")
+            .attr("transform", "translate(" + -25 + " " + (i * 20) + ")")
+            .attr("width", 15).attr("height", 15)
+            .attr("fill", cont_scale(d));
+        var text = cont_group.append("text")
+            .attr("transform", "translate(" + -5 + " " + (i * 20 + 12) + ")")
+            .attr("text-anchor", "start")
+            .attr("font-size", "1em")
+            .text(d)
+    })
+
+    // add tooltip
+    var tip = d3.tip().attr('class', 'd3-tip').html(function(d) {
+        //console.log(d);
+        var text = "<strong>Country</strong>: <span>" + d.country + "</span><br>"
+        text = text + "<strong>Continent</strong>: <span>" + d.continent + "</span><br>"
+        text = text + "<strong>GDP per Capita</strong>: <span>" + d3.format("$,.0f")(d.income) + "</span><br>"
+        text = text + "<strong>Population</strong>: <span>" + d3.format(",.0f")(d.population) + "</span><br>"
+        text = text + "<strong>Life Expectancy</strong>: <span>" + d3.format(".2f")(d.life_exp) + "</span><br>"
+        return text;
+    });
+    yearGroup.call(tip);
+
+
+    // update Data function
+    function updateData(index) {
+
+        // update Year label
+            year_label.text(function(d) {
+                year = (startYear + index);
+                return year;
+            });
+
+        var newData = arrayOfYears[index];
+
+        //console.log(circles);
+        // adjust all the circles
+        var circles = yearGroup.selectAll("circle")
+            .data(newData, function(d) {
+                //console.log(d);
+                return d.country;
+            });
+
+        circles.exit()
+            .attr("class", "exit")
+            .transition(t)
+                //.attr("cy", function(d) { return y_axis(d.life_exp); })
+                //.attr("r", function(d) { return r_scale(d.population); })
+                .attr("opacity", 0)
+            .remove();
+
+        circles.enter()
+            .append("circle")
+            .attr("class", "enter")
+            .attr("fill", function(d) { return cont_scale(d.continent); })
+            .merge(circles)
+                //.attr("value", function(d) { return d.continent; })  // check if colours match
+                //.attr("value", function(d) { return d.country; })
+                .attr("r", function(d) { return r_scale(d.population); })
+                .on("mouseover", tip.show)
+                .on("mouseout", tip.hide)
+                .transition(t)
+                    .attr("cx", function(d) { return x_axis(d.income); })
+                    .attr("cy", function(d) { return y_axis(d.life_exp); })
+                    .attr("opacity", 0.7);
+
+
+    };
+    updateData(year_index);
+
+    // add interval
+    d3.interval(function(){
+
+        // once year_index reaches max, just restart!
+        year_index = (year_index < data.length) ? year_index+1 : 0
+        //console.log(year_index, data.length);
         // function to update the data
         updateData(year_index);
 
