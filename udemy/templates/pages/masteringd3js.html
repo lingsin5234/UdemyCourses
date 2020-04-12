@@ -1,10 +1,17 @@
 {% include 'partials/header_udemy.html' %}
+    {% load static %}
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <a class="navbar-brand" href="#"><!--img id="logo" src="{% static 'img/logo.png' %}"--></a>
+        </div>
+    </nav>
+
     <div id="my-title" class="d-flex justify-content-center">
         <h1>Mastering D3.js Course</h1>
-    </div>
+    </div><br>
 
     <!-- Bootstrap grid setup -->
-    <div class="container">
+    <div class="d-flex justify-content-center">
         <div class="row">
             <div id="chart-area"></div>
         </div>

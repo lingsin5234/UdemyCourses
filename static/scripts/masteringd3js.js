@@ -1,6 +1,10 @@
+var margin = { top: 25, bottom: 50, left: 90, right: 30}
+var width = 800 - margin.left - margin.right
+var height = 600 - margin.top - margin.bottom
+
 var svg = d3.select("#chart-area").append("svg")
-	.attr("width", 400)
-	.attr("height", 400);
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom);
 
 /* ---- Part of Lesson 2 ---- */
 /*
@@ -19,6 +23,7 @@ var rect = svg.append("rect")
 */
 
 /* ---- Activity: 15 ---- */
+/*
 d3.json("/static/data/buildings.json").then(function(data) {
     console.log(data);
     data.forEach(function(d) {
@@ -43,5 +48,111 @@ d3.json("/static/data/buildings.json").then(function(data) {
 
 }).catch(function(error){
     console.log(error);
-});
+});*/
 
+
+/* ---- First Project ---- */
+/*
+d3.json("/static/data/revenues.json").then(function(data) {
+
+    data.forEach(function(d) {
+        d.profit = +d.profit;  // convert to integer
+    });
+
+    // group for the graph
+    var g = svg.append("g")
+        .attr("transform", "translate(" + margin.left + " " + margin.top + ")");
+
+    // x-axis
+    var x_axis = d3.scaleBand()
+        .domain(data.map(function(d) { return d.month; }))
+        .range([0, width])
+        .paddingInner(0.3)
+        .paddingOuter(0.3);
+    svg.append("g")
+        .attr("class", "x-axis")
+        .attr("transform", "translate(" + margin.left + " " + (height + margin.top) + ")")
+        .call(d3.axisBottom(x_axis));
+
+    // y-axis
+    var y_axis = d3.scaleLinear()
+        .domain([0, d3.max(data, function(d) { return d.revenue; })])
+        .range([height, 0]);
+    svg.append("g")
+        .attr("class", "y-axis")
+        .attr("transform", "translate(" + margin.left + " " + margin.top + ")")
+        .call(d3.axisLeft(y_axis));
+
+    // plot the bars
+    g.selectAll("rect")
+        .data(data).enter()
+        .append("rect")
+            .attr("x", function(d) {
+                return x_axis(d.month);
+            })
+            .attr("y", function(d) {
+                return y_axis(d.revenue);
+            })
+            .attr("width", x_axis.bandwidth())
+            .attr("height", function(d) {
+                return height - y_axis(d.revenue);
+            })
+            .attr("fill", "#888888");
+
+    // add X-axis label
+    g.append("text")
+        .attr("transform", "translate(" + width/2 + " " + (height + margin.bottom) + ")")
+        .attr("text-anchor", "start")
+        .attr("font-size", "1.2em")
+        .text("Months");
+
+    // add Y-axis label
+    g.append("text")
+        .attr("transform", "translate(" + -(margin.right * 2) + " " + (height/2 + margin.top) + ") rotate(-90)")
+        .attr("text-anchor", "start")
+        .attr("font-size", "1.2em")
+        .text("Revenue");
+});
+*/
+
+/* ---- Second Project ---- */
+d3.json("/static/data/data.json").then(function(data) {
+
+    data.forEach(function(d) {
+        //console.log(d);
+        d.year = +d.year;
+    })
+
+    // start with just 1 year
+    var newData = data[0]
+    console.log(newData);
+    //console.log(d3.min(data, function(d) { return d3.min(d.countries, function(x) { return x.population; }); }));
+
+    // setup group
+    var group = svg.append("g")
+        .attr("transform", "translate(" + margin.left + " " + margin.top + ")");
+
+    // X-Axis
+    var x_axis = d3.scaleLog()
+        .base(10)
+        .domain([300, 150000])
+        .range([0, width]);
+    svg.append("g")
+        .attr("transform", "translate(" + margin.left + " " + (height + margin.top) + ")")
+        .call(
+            d3.axisBottom(x_axis)
+                .tickValues([400, 4000, 40000])
+                .tickFormat(d3.format("$"))
+        );
+
+    // Y-Axis
+    var y_axis = d3.scaleLinear()
+        .domain([0, 90])
+        .range([height, 0]);
+    svg.append("g")
+        .attr("transform", "translate(" + margin.left + " " + margin.top + ")")
+        .call(d3.axisLeft(y_axis));
+
+    
+
+});
