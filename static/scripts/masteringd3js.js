@@ -118,20 +118,34 @@ d3.json("/static/data/revenues.json").then(function(data) {
 /* ---- Second Project ---- */
 d3.json("/static/data/data.json").then(function(data) {
 
-    data.forEach(function(d) {
-        //console.log(d);
-        d.year = +d.year;
-    })
-
+    // extract just the Countries, we can iterate the year
+    startYear = +d3.min(data, function(d) { return d.year; })
+    const arrayOfYears = data.map(function(year) {
+        // get all the income + life_exp is not null
+        countriesByYear = year.countries.filter(function(country){
+            var dataExists = (country.income && country.life_exp);
+            return dataExists;
+        });
+        // change all income and life_exp to numeric
+        countriesByYear.map(function(country){
+            country.income = +country.income;
+            country.life_exp = +country.life_exp;
+            return country;
+        });
+        //console.log(countriesByYear);
+        return countriesByYear;
+    });
+    //console.log(startYear);
+    //console.log(arrayOfYears);
     // year index
-    year_index = 0;
+    var year_index = 0;
     // start with just 1 year
-    var newData = data[year_index];
+    // var newData = data[year_index];
     //console.log(newData);
     //console.log(d3.min(data, function(d) { return d3.min(d.countries, function(x) { return x.income; }); }));
 
     // filter out the null pop/income/life_exp countries
-    var index = newData.countries.length - 1;
+    /*var index = newData.countries.length - 1;
     while (index != -1) {
         d = newData.countries[index];
         if (d.population == null || d.income == null || d.life_exp == null) {
@@ -139,7 +153,7 @@ d3.json("/static/data/data.json").then(function(data) {
             newData.countries.splice(index,1);
         }
         index--;
-    }
+    }*/
     //console.log(newData);
 
     // set transition time
@@ -176,19 +190,15 @@ d3.json("/static/data/data.json").then(function(data) {
     svg.append("g")
         .attr("transform", "translate(" + margin.left + " " + margin.top + ")")
         .call(d3.axisLeft(y_axis));
-
+    //console.log(d3.max(arrayOfYears, function(d) { return d3.max(d, function(x) { return x.population; }) }))
     // Radius Scale (Population)
     var r_scale = d3.scaleLinear()
-        .domain([0, d3.max(newData.countries, function(d) { return d.population; })])
+        .domain([0, d3.max(arrayOfYears, function(d) { return d3.max(d, function(x) { return x.population; }) })])
         .range([5, 25])
 
     // Ordinal Scale (Continents)
     var cont_scale = d3.scaleOrdinal(d3.schemeSet1)
-        .domain([d3.extent(newData.countries, function(d) { return d.continent; })])
-
-    // plot the dots
-    var circles = yearGroup.selectAll("circle")
-        .data(newData);
+        .domain([d3.extent(arrayOfYears, function(d) { return d3.extent(d, function(x) { return x.continent; }) })])
 
     // X-Axis Label
     yearGroup.append("text")
@@ -211,28 +221,23 @@ d3.json("/static/data/data.json").then(function(data) {
         .attr("font-size", "1.5em");
 
     // update Data function
-    function updateData(newData) {
-
-        // get rid of nulls
-        var index = newData.countries.length - 1;
-        while (index != -1) {
-            d = newData.countries[index];
-            if (d.population == null || d.income == null || d.life_exp == null) {
-                //console.log(d);
-                newData.countries.splice(index,1);
-            }
-            index--;
-        }
+    function updateData(index) {
 
         // update Year label
-        year_label.text(function(d) {
-            return newData.year;
-        });
+            year_label.text(function(d) {
+                year = (startYear + index);
+                return year;
+            });
+
+        var newData = arrayOfYears[index];
 
         //console.log(circles);
         // adjust all the circles
-        circles = yearGroup.selectAll("circle")
-            .data(newData.countries);
+        var circles = yearGroup.selectAll("circle")
+            .data(newData, function(d) {
+                //console.log(d);
+                return d.country;
+            });
 
         circles.exit()
             .attr("class", "exit")
@@ -256,19 +261,16 @@ d3.json("/static/data/data.json").then(function(data) {
 
 
     };
-    updateData(newData);
+    updateData(year_index);
 
     // add interval
     d3.interval(function(){
 
-        // increment index and then check if it has reached max
-        year_index++;
-        if (year_index < data.length) {
-            newData = data[year_index];
+        // once year_index reaches max, just restart!
+        year_index = (year_index < data.length) ? year_index+1 : 0
+        console.log(year_index, data.length);
+        // function to update the data
+        updateData(year_index);
 
-            // function to update the data
-            updateData(newData);
-        }
-
-    }, 1000);
+    }, 300);
 });
