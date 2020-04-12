@@ -123,8 +123,10 @@ d3.json("/static/data/data.json").then(function(data) {
         d.year = +d.year;
     })
 
+    // year index
+    year_index = 0;
     // start with just 1 year
-    var newData = data[0]
+    var newData = data[year_index];
     //console.log(newData);
     //console.log(d3.min(data, function(d) { return d3.min(d.countries, function(x) { return x.income; }); }));
 
@@ -138,7 +140,10 @@ d3.json("/static/data/data.json").then(function(data) {
         }
         index--;
     }
-    console.log(newData);
+    //console.log(newData);
+
+    // set transition time
+    var t = d3.transition().duration(100);
 
     // setup group
     var yearGroup = svg.append("g")
@@ -181,15 +186,9 @@ d3.json("/static/data/data.json").then(function(data) {
     var cont_scale = d3.scaleOrdinal(d3.schemeSet1)
         .domain([d3.extent(newData.countries, function(d) { return d.continent; })])
 
-    // add JUST the 1800 year of data
+    // plot the dots
     var circles = yearGroup.selectAll("circle")
-        .data(newData.countries).enter()
-        .append("circle")
-            .attr("cx", function(d) { return x_axis(d.income); })
-            .attr("cy", function(d) { return y_axis(d.life_exp); })
-            .attr("r", function(d) { return r_scale(d.population); })
-            .attr("fill", function(d) { return cont_scale(d.continent); })
-            .attr("value", function(d) { return d.country; });
+        .data(newData);
 
     // X-Axis Label
     yearGroup.append("text")
@@ -209,8 +208,67 @@ d3.json("/static/data/data.json").then(function(data) {
     var year_label = yearGroup.append("text")
         .attr("transform", "translate(" + (width - margin.right) + " " + height + ")")
         .attr("text-anchor", "start")
-        .attr("font-size", "1.5em")
-        .text(function(d) {
+        .attr("font-size", "1.5em");
+
+    // update Data function
+    function updateData(newData) {
+
+        // get rid of nulls
+        var index = newData.countries.length - 1;
+        while (index != -1) {
+            d = newData.countries[index];
+            if (d.population == null || d.income == null || d.life_exp == null) {
+                //console.log(d);
+                newData.countries.splice(index,1);
+            }
+            index--;
+        }
+
+        // update Year label
+        year_label.text(function(d) {
             return newData.year;
         });
+
+        //console.log(circles);
+        // adjust all the circles
+        circles = yearGroup.selectAll("circle")
+            .data(newData.countries);
+
+        circles.exit()
+            .attr("class", "exit")
+            .transition(t)
+                //.attr("cy", function(d) { return y_axis(d.life_exp); })
+                //.attr("r", function(d) { return r_scale(d.population); })
+                .attr("opacity", 0)
+            .remove();
+
+        circles.enter()
+            .append("circle")
+            .attr("class", "enter")
+            .attr("fill", function(d) { return cont_scale(d.continent); })
+            .merge(circles)
+                //.attr("value", function(d) { return d.country; })
+                .attr("r", function(d) { return r_scale(d.population); })
+                .transition(t)
+                    .attr("cx", function(d) { return x_axis(d.income); })
+                    .attr("cy", function(d) { return y_axis(d.life_exp); })
+                    .attr("opacity", 0.7);
+
+
+    };
+    updateData(newData);
+
+    // add interval
+    d3.interval(function(){
+
+        // increment index and then check if it has reached max
+        year_index++;
+        if (year_index < data.length) {
+            newData = data[year_index];
+
+            // function to update the data
+            updateData(newData);
+        }
+
+    }, 1000);
 });
