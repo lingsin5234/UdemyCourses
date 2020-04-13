@@ -1,30 +1,38 @@
 {% include 'partials/header_udemy.html' %}
-    {% load static %}
-    <nav class="navbar navbar-default">
-        <div class="container">
-            <a class="navbar-brand" href="#"><!--img id="logo" src="{% static 'img/logo.png' %}"--></a>
-        </div>
-    </nav>
-
-    <div id="my-title" class="d-flex justify-content-center">
+    <div id="my_title" class="d-flex justify-content-center">
         <h1>Mastering D3.js Course</h1>
     </div><br>
 
-    <!-- Bootstrap grid setup -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <button id="play-button" class="btn btn-primary">Play</button>
-                <button id="reset-button" class="btn btn-primary">Reset</button>
-            </div>
-            <div class="col-md-6">
-                <select id="continent-select" class="form-control">
-                    <option selected value="all">All</option>
-                    <option value="europe">Europe</option>
-                    <option value="asia">Asia</option>
-                    <option value="americas">Americas</option>
-                    <option value="africa">Africa</option>
-                </select>
+    <!-- heading -->
+    <div class="d-flex justify-content-center">
+        <h3>World GDP, Life Expectancy & Population (1800-2014)</h3>
+    </div><br>
+
+    <!-- class content -->
+    <div class="d-flex justify-content-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <button id="play-button" class="btn btn-primary">Play</button>
+                    <button id="reset-button" class="btn btn-primary">Reset</button>
+                </div>
+                <div class="col-md-4">
+                    <div id="slider-div">
+                        <label>Year: <span id="year">1800</span></label>
+                        <div id="date-slider" class="ui-slider"></div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                    <select id="continent-select" class="form-control">
+                        <option selected value="all">All</option>
+                        <option value="europe">Europe</option>
+                        <option value="asia">Asia</option>
+                        <option value="americas">Americas</option>
+                        <option value="africa">Africa</option>
+                    </select>
+                </div>
             </div>
         </div>
     </div>

@@ -365,55 +365,6 @@ d3.json("/static/data/data.json").then(function(data) {
     });
     yearGroup.call(tip);
 
-
-    // update Data function
-    function updateData(index) {
-
-        // set transition time
-        var t = d3.transition().duration(100);
-
-        // update Year label
-            year_label.text(function(d) {
-                year = (startYear + index);
-                return year;
-            });
-
-        var continent = $("#continent-select").val();
-        var newData = arrayOfYears[index];
-        if (continent == "all") { newData; }
-        else if (continent == "africa") { newData = newData.filter(function (d) { return d.continent == "africa"; }); }
-        else if (continent == "americas") { newData = newData.filter(function (d) { return d.continent == "americas"; }); }
-        else if (continent == "europe") { newData = newData.filter(function (d) { return d.continent == "europe"; }); }
-        else if (continent == "asia") { newData = newData.filter(function (d) { return d.continent == "asia"; }); }
-
-        //console.log(circles);
-        // adjust all the circles
-        var circles = yearGroup.selectAll("circle")
-            .data(newData, function(d) {
-                return d.country;
-            });
-
-        circles.exit()
-            .attr("class", "exit")
-            .remove();
-
-        circles.enter()
-            .append("circle")
-            .attr("class", "enter")
-            .attr("fill", function(d) { return cont_scale(d.continent); })
-            .attr("opacity", 0.7)
-            .on("mouseover", tip.show)
-            .on("mouseout", tip.hide)
-            .merge(circles)
-            .transition(t)
-                .attr("cx", function(d) { return x_axis(d.income); })
-                .attr("cy", function(d) { return y_axis(d.life_exp); })
-                .attr("r", function(d) { return r_scale(d.population); })
-
-
-    };
-    updateData(year_index);
-
     // new interval can be start/paused or reset
     $("#play-button")
         .on("click", function() {
@@ -444,6 +395,66 @@ d3.json("/static/data/data.json").then(function(data) {
         .on("change", function() {
             updateData(year_index);
         })
+
+    $("#date-slider").slider({
+        max: +d3.max(data, function(d) { return d.year; }),
+        min: +d3.min(data, function(d) { return d.year; }),
+        step: 1,
+        slide: function(event, ui){
+            year_index = ui.value - startYear;
+            updateData(year_index);
+        }
+    })
+
+    // update Data function
+    function updateData(index) {
+
+        // set transition time
+        var t = d3.transition().duration(100);
+
+        // update Year label
+            year_label.text(function(d) {
+                year = (startYear + index);
+                return year;
+            });
+
+        var continent = $("#continent-select").val();
+        var newData = arrayOfYears[index];
+
+        // much cleaner version!!
+        newData = newData.filter(function(d) {
+            if (continent == "all") { return true; }
+            else { return d.continent == continent; }
+        })
+
+        //console.log(circles);
+        // adjust all the circles
+        var circles = yearGroup.selectAll("circle")
+            .data(newData, function(d) {
+                return d.country;
+            });
+
+        circles.exit()
+            .attr("class", "exit")
+            .remove();
+
+        circles.enter()
+            .append("circle")
+            .attr("class", "enter")
+            .attr("fill", function(d) { return cont_scale(d.continent); })
+            .attr("opacity", 0.7)
+            .on("mouseover", tip.show)
+            .on("mouseout", tip.hide)
+            .merge(circles)
+            .transition(t)
+                .attr("cx", function(d) { return x_axis(d.income); })
+                .attr("cy", function(d) { return y_axis(d.life_exp); })
+                .attr("r", function(d) { return r_scale(d.population); })
+
+        $("#date-slider").slider("value", +(year_index + startYear))
+        $("#year").text(year_index + startYear)
+    };
+    updateData(year_index);
 
 });
 
