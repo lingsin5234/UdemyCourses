@@ -261,6 +261,7 @@ d3.json("/static/data/data.json").then(function(data) {
 */
 
 /* ---- Second Project Enhanced ---- */
+
 d3.json("/static/data/data.json").then(function(data) {
 
     // extract just the Countries, we can iterate the year
@@ -276,9 +277,6 @@ d3.json("/static/data/data.json").then(function(data) {
             return country;
         });
     });
-
-    // set transition time
-    var t = d3.transition().duration(100);
 
     // set year_index
     var year_index = 0;
@@ -371,57 +369,84 @@ d3.json("/static/data/data.json").then(function(data) {
     // update Data function
     function updateData(index) {
 
+        // set transition time
+        var t = d3.transition().duration(100);
+
         // update Year label
             year_label.text(function(d) {
                 year = (startYear + index);
                 return year;
             });
 
+        var continent = $("#continent-select").val();
         var newData = arrayOfYears[index];
+        if (continent == "all") { newData; }
+        else if (continent == "africa") { newData = newData.filter(function (d) { return d.continent == "africa"; }); }
+        else if (continent == "americas") { newData = newData.filter(function (d) { return d.continent == "americas"; }); }
+        else if (continent == "europe") { newData = newData.filter(function (d) { return d.continent == "europe"; }); }
+        else if (continent == "asia") { newData = newData.filter(function (d) { return d.continent == "asia"; }); }
 
         //console.log(circles);
         // adjust all the circles
         var circles = yearGroup.selectAll("circle")
             .data(newData, function(d) {
-                //console.log(d);
                 return d.country;
             });
 
         circles.exit()
             .attr("class", "exit")
-            .transition(t)
-                //.attr("cy", function(d) { return y_axis(d.life_exp); })
-                //.attr("r", function(d) { return r_scale(d.population); })
-                .attr("opacity", 0)
             .remove();
 
         circles.enter()
             .append("circle")
             .attr("class", "enter")
             .attr("fill", function(d) { return cont_scale(d.continent); })
+            .attr("opacity", 0.7)
+            .on("mouseover", tip.show)
+            .on("mouseout", tip.hide)
             .merge(circles)
-                //.attr("value", function(d) { return d.continent; })  // check if colours match
-                //.attr("value", function(d) { return d.country; })
+            .transition(t)
+                .attr("cx", function(d) { return x_axis(d.income); })
+                .attr("cy", function(d) { return y_axis(d.life_exp); })
                 .attr("r", function(d) { return r_scale(d.population); })
-                .on("mouseover", tip.show)
-                .on("mouseout", tip.hide)
-                .transition(t)
-                    .attr("cx", function(d) { return x_axis(d.income); })
-                    .attr("cy", function(d) { return y_axis(d.life_exp); })
-                    .attr("opacity", 0.7);
 
 
     };
     updateData(year_index);
 
-    // add interval
-    d3.interval(function(){
+    // new interval can be start/paused or reset
+    $("#play-button")
+        .on("click", function() {
+            var button = $(this);
+            if (button.text() == "Play"){
+                interval = setInterval(step, 100);
+                button.text("Pause");
+            } else {
+                clearInterval(interval);
+                button.text("Play");
+            }
+        });
 
-        // once year_index reaches max, just restart!
-        year_index = (year_index < data.length) ? year_index+1 : 0
-        //console.log(year_index, data.length);
-        // function to update the data
+    $("#reset-button")
+        .on("click", function() {
+           year_index = 0;
+           updateData(year_index);
+        });
+
+    function step() {
+        // note that this starts with the second one -- year_index = 1
+        // it runs 214 once at the end at "213"
+        year_index = (year_index < (data.length-1)) ? year_index+1 : 0
         updateData(year_index);
+    }
 
-    }, 300);
+    $("#continent-select")
+        .on("change", function() {
+            updateData(year_index);
+        })
+
 });
+
+
+/* ---- Third Project ---- */
+
