@@ -13,3 +13,6 @@ static/fonts
 static/fonts/*
 !static/scripts
 !static/scripts/*
+udemy/.git
+udemy/.git/*
+udemy/.gitignore
