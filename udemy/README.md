@@ -7,4 +7,4 @@ List of my courses at Udemy
 
 #### Mastering D3.js
 *  [Udemy Course Page](https://www.udemy.com/course/masteringd3js/)
-*  [Mastering D3.js](/udemy/masteringd3js/)
+*  [My Course Work](/udemy/masteringd3js/)
