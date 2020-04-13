@@ -20,5 +20,6 @@ from udemy import views as udemy_vw
 
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
+    re_path(r'^udemy/$', udemy_vw.project_markdown),
     re_path(r'^masteringd3js/', udemy_vw.mastering_d3js),
 ]
