@@ -1,0 +1,49 @@
+{% include 'partials/header_udemy.html' %}
+    <div id="my_title" class="d-flex justify-content-center">
+        <h1>Mastering D3.js Course</h1>
+    </div><br>
+
+    <!-- heading -->
+    <div class="d-flex justify-content-center">
+        <h3>World GDP, Life Expectancy & Population (1800-2014)</h3>
+    </div><br>
+
+    <!-- class content -->
+    <div class="d-flex justify-content-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                    <button id="play-button" class="btn btn-primary">Play</button>
+                    <button id="reset-button" class="btn btn-primary">Reset</button>
+                </div>
+                <div class="col-md-4">
+                    <div id="slider-div">
+                        <label>Year: <span id="year">1800</span></label>
+                        <div id="date-slider" class="ui-slider"></div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                    <select id="continent-select" class="form-control">
+                        <option selected value="all">All</option>
+                        <option value="europe">Europe</option>
+                        <option value="asia">Asia</option>
+                        <option value="americas">Americas</option>
+                        <option value="africa">Africa</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="row">
+            <div id="chart-area"></div>
+        </div>
+    </div>
+
+    <!-- Load the main d3.js file -->
+    {% load static %}
+    <script src="{% static 'scripts/masteringd3js.js' %}"></script>
+
+{% include 'partials/footer_udemy.html' %}
