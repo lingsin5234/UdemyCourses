@@ -3,6 +3,47 @@
         <h1>Mastering D3.js Course</h1>
     </div><br>
 
+    <!-- CSS Styling -->
+    <style>
+        .axis {
+            font: 10px sans-serif;
+        }
+
+        .axis path, .axis line {
+            fill: none;
+            stroke: #D4D8DA;
+            stroke-width: 2px;
+            shape-rendering: crispEdges;
+        }
+
+        .line {
+            fill: none;
+            stroke-width: 2px;
+        }
+
+        .overlay {
+            fill: none;
+            pointer-events: all;
+        }
+
+        .focus circle {
+            fill: #F1F3F3;
+            stroke: #777;
+            stroke-width: 3px;
+        }
+
+        .hover-line {
+            stroke: #777;
+            stroke-width: 2px;
+            stroke-dasharray: 3,3;
+        }
+
+        #selections .col-md-4 {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+    </style>
+
     <!-- heading -->
     <div class="d-flex justify-content-center">
         <h3>Project 2: World GDP, Life Expectancy & Population (1800-2014)</h3>
@@ -45,7 +86,7 @@
     </div><br>
 
     <div class="d-flex justify-content-center">
-        <h3>Project 3: BitCoin Chart</h3>
+        <h3>Project 3: Cryptocurrency Chart</h3>
     </div><br>
 
          <!-- Third Project -->
@@ -53,9 +94,9 @@
         <div class="container">
             <div id="selections" class="row">
                 <div class="col-md-4">
-                    <div id="slider-div">
+                    <div id="slider-div-proj3">
                         <label>Date: <span id="dateLabel1">12/05/2013</span> - <span id="dateLabel2">31/10/2017</span></label>
-                        <div id="date-slider"></div>
+                        <div id="date-slider-proj3"></div>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -76,7 +117,8 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-1"></div>
+                <div class="col-md-11">
                     <div id="proj-3-chart"></div>
                 </div>
             </div>
@@ -85,7 +127,7 @@
 
     <!-- Load the main d3.js file -->
     {% load static %}
-    <!--script src="{% static 'scripts/udemy_masteringd3js.js' %}"></script-->
+    <script src="{% static 'scripts/udemy_masteringd3js.js' %}"></script>
     <script src="{% static 'scripts/udemy_masteringd3js_proj3.js' %}"></script>
 
 {% include 'partials/footer_udemy.html' %}
