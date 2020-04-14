@@ -86,17 +86,30 @@ d3.json("/static/data/coins.json").then(function(data) {
     updateData();
 });
 
+// coin selection change
+$("#coin-select").on("change", function() {
+    updateData();
+})
+
+// variable selection change
+$("#var-select").on("change", function() {
+    updateData();
+})
+
+
 
 // put all the parts to update in here
 function updateData() {
 
-    coin = "bitcoin"
+    // get selected Values
+    coin = $("#coin-select").val();
+    var_sel = $("#var-select").val();
 
     // Set scale domains
     //console.log(d3.extent(newData[coin], function(d) { return d.date; }));
     x.domain(d3.extent(newData[coin], d => d.date));
-    y.domain([d3.min(newData[coin], d => d.price_usd) / 1.005,
-        d3.max(newData[coin], d => d.price_usd) * 1.005]);
+    y.domain([d3.min(newData[coin], d => d[var_sel]) / 1.005,
+        d3.max(newData[coin], d => d[var_sel]) * 1.005]);
 
     // Generate axes once scales have been set
     xAxis.call(xAxisCall.scale(x).tickFormat(d3.timeFormat("%Y")).ticks(5))
@@ -108,7 +121,10 @@ function updateData() {
             //console.log(x(d.date));
             return x(d.date);
         })
-        .y(d => y(d.price_usd))
+        .y(d => y(d[var_sel]))
+
+    // remove previous line
+    g.select(".line").remove()
 
     // Add line to chart
     g.append("path")
