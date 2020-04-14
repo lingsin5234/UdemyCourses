@@ -17,6 +17,7 @@ var g = svg.append("g")
 
 // Time parser for x-scale
 var parseTime = d3.timeParse("%d/%m/%Y");
+var formatTime = d3.timeFormat("%d/%m/%Y");
 // For tooltip
 var bisectDate = d3.bisector(function(d) { return d.year; }).left;
 
@@ -46,11 +47,6 @@ yAxis.append("text")
     .style("text-anchor", "end")
     .attr("fill", "#5D6971")
     .text("Population)");
-
-// Line path generator
-var line = d3.line()
-    .x(function(d) { return x(d.year); })
-    .y(function(d) { return y(d.value); });
 
 /*
 "bitcoin": [
@@ -96,6 +92,19 @@ $("#var-select").on("change", function() {
     updateData();
 })
 
+// slider
+$("#date-slider-proj3").slider({
+    range: true,
+    max: parseTime("31/10/2017").getTime(),
+    min: parseTime("12/5/2013").getTime(),
+    values: [parseTime("12/5/2013").getTime(), parseTime("31/10/2017").getTime()],
+    step: (24 * 60 * 60 * 1000),  // milliseconds in a day
+    slide: function(event, ui){
+        $("#dateLabel1").text(formatTime(new Date(ui.values[0])));
+        $("#dateLabel2").text(formatTime(new Date(ui.values[1])));
+        updateData();
+    }
+})
 
 
 // put all the parts to update in here
@@ -104,10 +113,18 @@ function updateData() {
     // get selected Values
     coin = $("#coin-select").val();
     var_sel = $("#var-select").val();
+    //console.log($("#date-slider-proj3").slider("values"))
+    slider_vals = $("#date-slider-proj3").slider("values");
+
+    // change array set based on dates
+    dataArray = newData[coin].filter(function(d) {
+        var keepData = (d.date.getTime() >= slider_vals[0] && d.date.getTime() <= slider_vals[1]);
+        return (d.date.getTime() >= slider_vals[0] && d.date.getTime() <= slider_vals[1]);
+    })
 
     // Set scale domains
     //console.log(d3.extent(newData[coin], function(d) { return d.date; }));
-    x.domain(d3.extent(newData[coin], d => d.date));
+    x.domain(slider_vals);
     y.domain([d3.min(newData[coin], d => d[var_sel]) / 1.005,
         d3.max(newData[coin], d => d[var_sel]) * 1.005]);
 
@@ -132,7 +149,7 @@ function updateData() {
         .attr("fill", "none")
         .attr("stroke", "grey")
         .attr("stroke-with", "3px")
-        .attr("d", theLine(newData[coin]));
+        .attr("d", theLine(dataArray));
 
     /******************************** Tooltip Code ********************************/
 
