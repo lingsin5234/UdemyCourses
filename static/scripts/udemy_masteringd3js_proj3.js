@@ -138,14 +138,32 @@ function updateData3() {
         return (d.date.getTime() >= slider_vals[0] && d.date.getTime() <= slider_vals[1]);
     })
 
+    // need to change up the scale format based on the size, if k or G, change the format
+    //y_axis_max = d3.format("~s")(d3.max(dataArray, d => d[var_sel]));
+    function yScaleFormat (y_val) {
+        var s = d3.format("~s")(y_val);
+        switch (s[s.length - 1]) {
+        case "G": return s.slice(0, -1) + "B";
+        case "k": return s.slice(0, -1) + "K";
+        // case "M" is fine, that's still million
+        }
+        return s;
+    }
+
     // Set scale domains
     x.domain(slider_vals);
     y.domain([d3.min(dataArray, d => d[var_sel]) / 1.005,
-        d3.max(dataArray, d => d[var_sel]) * 1.005]);
+            d3.max(dataArray, d => d[var_sel]) * 1.005]);
 
     // Generate axes once scales have been set
     xAxis.transition(t()).call(xAxisCall.scale(x))
-    yAxis.transition(t()).call(yAxisCall.scale(y))
+    yAxis.transition(t()).call(yAxisCall.scale(y).tickFormat(yScaleFormat))
+
+    // update Y-Scale Label
+    var_sel_text = (var_sel == "price_usd") ? "Price (USD)" :
+        ((var_sel == "market_cap") ?  "Market Capitalization (USD)" : "24 Hour Trading Volume (USD)")
+    yAxis.select(".axis-title")
+        .text(var_sel_text)
 
     // declare d3.line()
     theLine = d3.line()
@@ -201,7 +219,7 @@ function updateData3() {
         focus.select("text").text(d[var_sel]);
         focus.select(".x-hover-line").attr("y2", height - y(d[var_sel]));
         focus.select(".y-hover-line").attr("x2", -x(d.date));
-        console.log(height - y(d[var_sel]));
+        //console.log(height - y(d[var_sel]));
     }
 
 
