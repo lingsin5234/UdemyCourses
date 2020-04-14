@@ -63,13 +63,10 @@ var line = d3.line()
 */
 d3.json("/static/data/coins.json").then(function(data) {
 
-    var dict_index = 0;
-    var keys = Object.keys(data)
-    var newData = []
-    while (dict_index < keys.length) {
-
-        // Data Cleaning
-        newData.push(data[keys[dict_index]].filter(function(d) {
+    // Data Cleaning
+    newData = {}
+    for (var coin in data) {
+        newData[coin] = data[coin].filter(function(d) {
             var dataExists = (d["24h_vol"] && d.market_cap && d.price_usd)
             return dataExists;
         }).map(function(d) {
@@ -83,20 +80,23 @@ d3.json("/static/data/coins.json").then(function(data) {
                 }
             }
             return d;
-        }))
-        dict_index++;
-
+        })
     }
-    //console.log(newData);
-    //console.log(keys);
-    dict_index = 0;
-    //console.log(newData[dict_index][0]);
+
+    updateData();
+});
+
+
+// put all the parts to update in here
+function updateData() {
+
+    coin = "bitcoin"
 
     // Set scale domains
-    //console.log(d3.extent(newData[dict_index], function(d) { return d.date; }));
-    x.domain(d3.extent(newData[dict_index], d => d.date));
-    y.domain([d3.min(newData[dict_index], d => d.price_usd) / 1.005,
-        d3.max(newData[dict_index], d => d.price_usd) * 1.005]);
+    //console.log(d3.extent(newData[coin], function(d) { return d.date; }));
+    x.domain(d3.extent(newData[coin], d => d.date));
+    y.domain([d3.min(newData[coin], d => d.price_usd) / 1.005,
+        d3.max(newData[coin], d => d.price_usd) * 1.005]);
 
     // Generate axes once scales have been set
     xAxis.call(xAxisCall.scale(x).tickFormat(d3.timeFormat("%Y")).ticks(5))
@@ -116,7 +116,7 @@ d3.json("/static/data/coins.json").then(function(data) {
         .attr("fill", "none")
         .attr("stroke", "grey")
         .attr("stroke-with", "3px")
-        .attr("d", theLine(newData[dict_index]));
+        .attr("d", theLine(newData[coin]));
 
     /******************************** Tooltip Code ********************************/
 
@@ -164,7 +164,8 @@ d3.json("/static/data/coins.json").then(function(data) {
 
     /******************************** Tooltip Code ********************************/
 
-});
+
+}
 
 /** WORKING SAMPLE **/
 /*
