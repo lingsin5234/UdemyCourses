@@ -19,7 +19,7 @@ var g = svg.append("g")
 var parseTime = d3.timeParse("%d/%m/%Y");
 var formatTime = d3.timeFormat("%d/%m/%Y");
 // For tooltip
-var bisectDate = d3.bisector(function(d) { return d.year; }).left;
+var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
 // Scales
 var x = d3.scaleTime().range([0, width]);
@@ -28,8 +28,6 @@ var y = d3.scaleLinear().range([height, 0]);
 // Axis generators
 var xAxisCall = d3.axisBottom()
 var yAxisCall = d3.axisLeft()
-    .ticks(6)
-    .tickFormat(function(d) { return parseInt(d / 1000) + "k"; });
 
 // Axis groups
 var xAxis = g.append("g")
@@ -37,6 +35,15 @@ var xAxis = g.append("g")
     .attr("transform", "translate(0," + height + ")");
 var yAxis = g.append("g")
     .attr("class", "y axis")
+
+// X-Axis label
+xAxis.append("text")
+    .attr("class", "axis-title")
+    .attr("y", 10)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .attr("fill", "#5D6971")
+    .text("Date Range");
 
 // Y-Axis label
 yAxis.append("text")
@@ -46,7 +53,17 @@ yAxis.append("text")
     .attr("dy", ".71em")
     .style("text-anchor", "end")
     .attr("fill", "#5D6971")
-    .text("Population)");
+    .text("Price in USD");
+
+// transition -- why is this a function??
+var t = function(){ return d3.transition().duration(1000); }
+
+// the line chart Line
+var chartLine = g.append("path")
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "grey")
+        .attr("stroke-with", "3px")
 
 /*
 "bitcoin": [
@@ -113,7 +130,6 @@ function updateData() {
     // get selected Values
     coin = $("#coin-select").val();
     var_sel = $("#var-select").val();
-    //console.log($("#date-slider-proj3").slider("values"))
     slider_vals = $("#date-slider-proj3").slider("values");
 
     // change array set based on dates
@@ -123,14 +139,13 @@ function updateData() {
     })
 
     // Set scale domains
-    //console.log(d3.extent(newData[coin], function(d) { return d.date; }));
     x.domain(slider_vals);
-    y.domain([d3.min(newData[coin], d => d[var_sel]) / 1.005,
-        d3.max(newData[coin], d => d[var_sel]) * 1.005]);
+    y.domain([d3.min(dataArray, d => d[var_sel]) / 1.005,
+        d3.max(dataArray, d => d[var_sel]) * 1.005]);
 
     // Generate axes once scales have been set
-    xAxis.call(xAxisCall.scale(x).tickFormat(d3.timeFormat("%Y")).ticks(5))
-    yAxis.call(yAxisCall.scale(y))
+    xAxis.transition(t()).call(xAxisCall.scale(x))
+    yAxis.transition(t()).call(yAxisCall.scale(y))
 
     // declare d3.line()
     theLine = d3.line()
@@ -140,15 +155,8 @@ function updateData() {
         })
         .y(d => y(d[var_sel]))
 
-    // remove previous line
-    g.select(".line").remove()
-
-    // Add line to chart
-    g.append("path")
-        .attr("class", "line")
-        .attr("fill", "none")
-        .attr("stroke", "grey")
-        .attr("stroke-with", "3px")
+    // move the line as necessary
+    chartLine.transition(t)
         .attr("d", theLine(dataArray));
 
     /******************************** Tooltip Code ********************************/
@@ -174,25 +182,27 @@ function updateData() {
         .attr("x", 15)
         .attr("dy", ".31em");
 
-    /*g.append("rect")
+    g.append("rect")
         .attr("class", "overlay")
         .attr("width", width)
         .attr("height", height)
+        .attr("fill", "transparent")
         .on("mouseover", function() { focus.style("display", null); })
         .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove);
 
     function mousemove() {
         var x0 = x.invert(d3.mouse(this)[0]),
-            i = bisectDate(data, x0, 1),
-            d0 = data[i - 1],
-            d1 = data[i],
-            d = x0 - d0.year > d1.year - x0 ? d1 : d0;
-        focus.attr("transform", "translate(" + x(d.year) + "," + y(d.value) + ")");
-        focus.select("text").text(d.value);
-        focus.select(".x-hover-line").attr("y2", height - y(d.value));
-        focus.select(".y-hover-line").attr("x2", -x(d.year));
-    }*/
+            i = bisectDate(dataArray, x0, 1),
+            d0 = dataArray[i - 1],
+            d1 = dataArray[i],
+            d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+        focus.attr("transform", "translate(" + x(d.date) + "," + y(d[var_sel]) + ")");
+        focus.select("text").text(d[var_sel]);
+        focus.select(".x-hover-line").attr("y2", height - y(d[var_sel]));
+        focus.select(".y-hover-line").attr("x2", -x(d.date));
+        console.log(height - y(d[var_sel]));
+    }
 
 
     /******************************** Tooltip Code ********************************/
