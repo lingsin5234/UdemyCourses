@@ -8,11 +8,11 @@ var margin = { left:80, right:100, top:50, bottom:100 },
     height = 500 - margin.top - margin.bottom,
     width = 800 - margin.left - margin.right;
 
-var svg = d3.select("#proj-3-chart").append("svg")
+var svg3 = d3.select("#proj-3-chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom);
 
-var g = svg.append("g")
+var g = svg3.append("g")
     .attr("transform", "translate(" + margin.left + " " + margin.top + ")");
 
 // Time parser for x-scale
@@ -96,17 +96,17 @@ d3.json("/static/data/coins.json").then(function(data) {
         })
     }
 
-    updateData();
+    updateData3();
 });
 
 // coin selection change
 $("#coin-select").on("change", function() {
-    updateData();
+    updateData3();
 })
 
 // variable selection change
 $("#var-select").on("change", function() {
-    updateData();
+    updateData3();
 })
 
 // slider
@@ -119,13 +119,13 @@ $("#date-slider-proj3").slider({
     slide: function(event, ui){
         $("#dateLabel1").text(formatTime(new Date(ui.values[0])));
         $("#dateLabel2").text(formatTime(new Date(ui.values[1])));
-        updateData();
+        updateData3();
     }
 })
 
 
 // put all the parts to update in here
-function updateData() {
+function updateData3() {
 
     // get selected Values
     coin = $("#coin-select").val();
