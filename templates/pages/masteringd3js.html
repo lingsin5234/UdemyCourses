@@ -89,7 +89,7 @@
         <h3>Project 3: Cryptocurrency Chart</h3>
     </div><br>
 
-         <!-- Third Project -->
+    <!-- Third Project -->
     <div class="d-flex justify-content-center">
         <div class="container">
             <div id="selections" class="row">
@@ -125,9 +125,47 @@
         </div>
     </div><br>
 
+    <!-- Third Project Revised -->
+    <div class="d-flex justify-content-center">
+        <h3>Project 3 - Revised: Cryptocurrency Chart</h3>
+    </div><br>
+
+    <div class="d-flex justify-content-center">
+        <div class="container">
+            <div id="selections-e" class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                    <div id="slider-div-proj3-e">
+                        <label>Date: <span id="dateLabel1-e">12/05/2013</span> - <span id="dateLabel2-e">31/10/2017</span></label>
+                        <div id="date-slider-proj3-e"></div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                    <select id="var-select-proj3-e" class="form-control">
+                        <option selected value="price_usd">Price in dollars</option>
+                        <option value="market_cap">Market capitalization</option>
+                        <option value="24h_vol">24 hour trading volume</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <!-- it will auto-wrap since it is only 12 per "row" -->
+                <div class="col-md-4" id="chart-area-proj3-1"></div>
+                <div class="col-md-4" id="chart-area-proj3-2"></div>
+                <div class="col-md-4" id="chart-area-proj3-3"></div>
+                <div class="col-md-4" id="chart-area-proj3-4"></div>
+                <div class="col-md-4" id="chart-area-proj3-5"></div>
+            </div>
+        </div>
+    </div><br><br>
+
+
     <!-- Load the main d3.js file -->
     {% load static %}
-    <script src="{% static 'scripts/udemy_masteringd3js.js' %}"></script>
-    <script src="{% static 'scripts/udemy_masteringd3js_proj3.js' %}"></script>
+    <script src="{% static 'scripts/udemy/masteringd3js.js' %}"></script>
+    <script src="{% static 'scripts/udemy/masteringd3js_proj3.js' %}"></script>
+    <script src="{% static 'scripts/udemy/masteringd3js_proj3-main.js' %}"></script>
+    <script src="{% static 'scripts/udemy/masteringd3js_proj3-lineChart.js' %}"></script>
 
 {% include 'partials/footer_udemy.html' %}
