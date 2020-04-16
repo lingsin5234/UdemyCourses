@@ -24,7 +24,7 @@ DonutChart.prototype.initVis = function() {
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
     vis.radius = Math.min(vis.width, vis.height) / 2;
-    console.log(vis.svgWidth, vis.height)
+
     // this is where you get the parentElement - e.g. "#chart-area-proj-1"
     vis.svg3 = d3.select(vis.parentElement).append("svg")
         .attr("width", vis.width + vis.margin.left + vis.margin.right)

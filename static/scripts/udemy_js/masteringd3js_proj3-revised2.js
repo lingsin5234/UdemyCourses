@@ -14,6 +14,7 @@ var lineChart6,
 var parseTime = d3.timeParse("%d/%m/%Y");
 var formatTime = d3.timeFormat("%d/%m/%Y");
 var colour = d3.scaleOrdinal(d3.schemeDark2);
+var activeCoinSelected;
 
 // transition function -- declared in proj3-main
 // var transTime = function(){ return d3.transition().duration(1000); }
@@ -43,20 +44,23 @@ d3.json("/static/data/coins.json").then(function(data) {
             "coin": coin,
             "data": newData2[coin].slice(-1)[0]
         })
-        console.log(newData2["bitcoin"].slice(-1))
+        //console.log(newData2["bitcoin"].slice(-1))
         //console.log(donutData);
     }
 
 
 
     // instead of updateData(), declare the lineChart and donutCharts
-    lineChart6 = new LineChart("#line-chart-proj3-1", "bitcoin", newData2, 600, 800, "#var-select-proj3-e2", "#date-slider-proj3-e2");
-    donutChart1 = new DonutChart("#donut-chart-proj3-1", "market_cap", donutData, 300, 400);
-    donutChart2 = new DonutChart("#donut-chart-proj3-2", "24h_vol", donutData, 300, 400);
+    lineChart6 = new LineChart("#line-chart-proj3-1", "bitcoin", newData2,
+                    450, 750, "#var-select-proj3-e2", "#date-slider-proj3-e2", false);
+    donutChart1 = new DonutChart("#donut-chart-proj3-1", "market_cap", donutData, 350, 400);
+    donutChart2 = new DonutChart("#donut-chart-proj3-2", "24h_vol", donutData, 350, 400);
 });
 
 // coin selection change
 $("#coin-select-proj3-e2").on("change", function() {
+    //console.log("Coin Selected: ", this.value);
+    activeCoinSelected = this.value;
     coinChange();
 })
 
@@ -82,6 +86,8 @@ $("#date-slider-proj3-e2").slider({
 // when the arc is clicked, change dropdown AND coins focus (opacity)
 function arcClicked(arc){
     $("#coin-select-proj3-e2").val(arc.data.coin);
+    activeCoinSelected = arc.data.coin;
+    //console.log("Arc Clicked: ", activeCoinSelected);
     coinChange();
 }
 
