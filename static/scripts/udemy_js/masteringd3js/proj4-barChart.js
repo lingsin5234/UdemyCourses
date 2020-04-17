@@ -58,8 +58,8 @@ BarChart.prototype.initVis = function() {
         .attr("transform", "translate(0 0)");
 
     // add X-axis label
-    vis.xAxisLabel = vis.g.append("text")
-        .attr("transform", "translate(" + vis.width/2 + " " + (vis.height + vis.margin.bottom) + ")")
+    /*vis.xAxisLabel = vis.g.append("text")
+        .attr("transform", "translate(" + (vis.width/2 - vis.margin.right) + " " + (vis.height + vis.margin.bottom/2) + ")")
         .attr("text-anchor", "start")
         .attr("font-size", "1.2em")
         .text("Category");
@@ -68,7 +68,15 @@ BarChart.prototype.initVis = function() {
     vis.yAxisLabel = vis.g.append("text")
         .attr("transform", "translate(" + -(vis.margin.right * 2) + " " + (vis.height/2 + vis.margin.top) + ") rotate(-90)")
         .attr("text-anchor", "start")
-        .attr("font-size", "1.2em");
+        .attr("font-size", "1.2em");*/
+
+    // Add a Title
+    vis.g.append("text")
+        .attr("transform", "translate(" + vis.width/2 + " -10)")
+        .attr("text-anchor", "middle")
+        .attr("font-size", "1.2em")
+        .text(vis.yVariable == "units_sold" ? "Units Sold" :
+            vis.yVariable == "call_revenue" ? "Call Revenue" : "Call Duration");
 
     vis.wrangleData();
 }
@@ -100,7 +108,7 @@ BarChart.prototype.wrangleData = function() {
                 count: d.values.length
             }
         });
-    console.log(vis.data);
+    //console.log(vis.data);
 
     vis.updateVis();
 }
@@ -119,11 +127,11 @@ BarChart.prototype.updateVis = function() {
     vis.yAxis.transition(transTime2).call(vis.yAxisCall.scale(vis.y))
 
     // Add Y Axis Label
-    vis.yAxisLabel.text();
+    //vis.yAxisLabel.text(vis.yVariable);
 
     // group for bars, divide up elements of array -- this makes transition operate cleaner
     vis.bars = vis.g.selectAll("rect")
-        .data(vis.data, function(d) { console.log(d); return d.category; })
+        .data(vis.data, function(d) { /*console.log(d);*/ return d.category; })
 
     // exit the old bars
     vis.bars.exit()
