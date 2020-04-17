@@ -45,7 +45,7 @@
     </style>
 
     <div class="d-flex justify-content-center">
-        <p>Below are my projects that I worked on throughout the course. Project 1, a simple bar chart
+        <p>Below are my projects that I worked on throughout the course. Project 1, a simple bar chart,
             has been excluded but I have kept the labelling for those who have taken the course to follow.
         </p>
     </div>
@@ -214,14 +214,53 @@
     </div><br><br>
 
 
+    <!-- Final Project - Corporate Dashboard -->
+    <div class="d-flex justify-content-center">
+        <h3>Project 4 - Corporate Dashboard</h3>
+    </div><br>
+
+    <div class="d-flex justify-content-center">
+        <div class="container">
+            <div class="row">
+                <div id="left-charts" class="col-sm-12 col-md-8">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Dates: <span id="dateLabel1-proj4">01/01/2017</span> - <span id="dateLabel2-proj4">10/12/2017</span></label>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="var-select-proj4" class="form-control">
+                                <option selected value="call_revenue">Revenue (USD)</option>
+                                <option value="call_duration">Call Time (seconds)</option>
+                                <option value="units_sold">Units Sold</option>
+                            </select>
+                        </div>
+                    </div><br>
+                    <div id="stacked-area"></div>
+                    <div id="timeline"></div>
+                </div>
+                <div id="right-charts" class="col-md-4 col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-12" id="company-size"></div>
+                        <div class="col-sm-6 col-md-12" id="units-sold"></div>
+                        <div class="col-sm-6 col-md-12" id="revenue"></div>
+                        <div class="col-sm-6 col-md-12" id="call-duration"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><br><br>
+
+
     <!-- Load the main d3.js file -->
     {% load static %}
-    <script src="{% static 'scripts/udemy_js/masteringd3js/proj2.js' %}"></script>
+    <!--script src="{% static 'scripts/udemy_js/masteringd3js/proj2.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3original.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-lineChart.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-main.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-donutChart.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-timeline.js' %}"></script>
-    <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-revised2.js' %}"></script>
+    <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-revised2.js' %}"></script-->
+    <script src="{% static 'scripts/udemy_js/masteringd3js/proj4-timeline.js' %}"></script>
+    <script src="{% static 'scripts/udemy_js/masteringd3js/proj4-main.js' %}"></script>
 
 {% include 'partials/footer_udemy.html' %}
