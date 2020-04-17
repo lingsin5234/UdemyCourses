@@ -60,7 +60,7 @@ StackedArea.prototype.wrangleData = function() {
 
     vis.date1 = parseTime2($("#dateLabel1-proj4").text());
     vis.date2 = parseTime2($("#dateLabel2-proj4").text());
-    vis.yVariable = $("#var-select-proj4").val()
+    vis.yVariable = $("#var-select-proj4").val();
     //console.log(vis.date1, vis.date2, vis.yVariable)
 
     // filter the dates, then map with date as key along with the variable value from all 4 teams
