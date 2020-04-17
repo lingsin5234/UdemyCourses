@@ -4,9 +4,9 @@
 *   Final Project - Corporate Dashboard
 */
 
-var dataSet,
-    timeline2,
-    stackedArea;
+var allCalls = {};
+var callSums,
+    nestedCalls;
 var parseTime2 = d3.timeParse("%d/%m/%Y");
 var formatTime2 = d3.timeFormat("%d/%m/%Y");
 var transTime2 = function(){ return d3.transition().duration(100); }
@@ -27,19 +27,48 @@ brushed2 = function() {
 d3.json("/static/data/calls.json").then(function(data) {
 
     //console.log(data);
-    dataSet = data.filter(function(d) {
+    data.filter(function(d) {
         return (d.call_duration && d.call_revenue && d.units_sold);
     });
-    dataSet.forEach(function(d) {
+    data.forEach(function(d) {
         d.call_duration = +d.call_duration;
         d.call_revenue = +d.call_revenue;
         d.units_sold = +d.units_sold;
         d.date = parseTime2(d.date);
     });
 
-    timeline2 = new TimeLine("#timeline", 250, 700)
+    // allCalls contains everything from original data set
+    allCalls = data;
 
-    timeline2.wrangleData();
+    // callSums is everything summed up - used for timeline
+    // .nest is useful in that it can set the KEY and the VALUES (to everything inside it, e.g. "call_revenue")
+    callSums = d3.nest()
+        .key(function(d){ return formatTime2(d.date); })
+        .entries(allCalls)
+            // the map returns as object with date, sum keys
+            .map(function(day){
+                return {
+                    date: day.key,
+                    // reduce takes all the values from the day Object, values and SUMs upon return
+                    sum: day.values.reduce(function(accumulator, current){
+                        return accumulator + current["call_revenue"]
+                    }, 0)
+                }
+            });
+
+    // nestedCalls is splitting the calls by category
+    nestedCalls = d3.nest()
+        .key(function(d){
+            return d.category;
+        })
+        .entries(allCalls)
+
+    //console.log(allCalls);
+    //console.log(callSums);
+    //console.log(nestedCalls);
+
+    timeline2 = new TimeLine("#timeline", 250, 700);
+
 }).catch(function(error) { console.log(error); });
 
 

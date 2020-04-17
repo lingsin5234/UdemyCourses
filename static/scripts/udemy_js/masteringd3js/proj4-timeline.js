@@ -67,9 +67,21 @@ TimeLine.prototype.wrangleData = function() {
     vis.xDate1 = $("#dateLabel1-proj4").text();
     vis.xDate2 = $("#dateLabel2-proj4").text();
 
-    // update the data set
-    // console.log(vis.yVariable, vis.xDate1, vis.xDate2);
-    // console.log([dataSet]);
+    // update the data set to one that is the SUM of all
+    callSums = d3.nest()
+        .key(function(d){ return formatTime2(d.date); })
+        .entries(allCalls)
+            // the map returns as object with date, sum keys
+            .map(function(day){
+                return {
+                    date: day.key,
+                    // reduce takes all the values from the day Object, values and SUMs upon return
+                    sum: day.values.reduce(function(accumulator, current){
+                        return accumulator + current[vis.yVariable]
+                    }, 0)
+                }
+            });
+    //console.log(callSums);
 
     vis.updateVis();
 };
@@ -79,21 +91,21 @@ TimeLine.prototype.updateVis = function() {
     var vis = this;
 
     // set domains and call x axis; y domain set but axis not called
-    vis.x.domain(d3.extent(dataSet, function(d) { return d.date; }));
+    vis.x.domain(d3.extent(callSums, function(d) { return parseTime2(d.date); }));
     vis.xAxisCall.scale(vis.x);
     vis.xAxis.transition(transTime2).call(vis.xAxisCall);
 
-    vis.y.domain([d3.min(dataSet, function(d) { return d[vis.yVariable]; }),
-        d3.max(dataSet, function(d) { return d[vis.yVariable]; })]);
+    vis.y.domain([d3.min(callSums, function(d) { return d.sum; }),
+        d3.max(callSums, function(d) { return d.sum; })]);
 
     // stacked Area function
     vis.area = d3.area()
-        .x(function(d) { return vis.x(d.date); })
+        .x(function(d) { return vis.x(parseTime2(d.date)); })
         .y0(vis.height) // start at x-axis
-        .y1(function(d) { return vis.y(d[vis.yVariable]); });
+        .y1(function(d) { return vis.y(d.sum); });
 
     // draw the area
     vis.areaPath
-        .data([dataSet])  // needs to be array
+        .data([callSums])  // needs to be array
         .attr('d', vis.area);
 };
