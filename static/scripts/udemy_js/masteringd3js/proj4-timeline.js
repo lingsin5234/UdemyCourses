@@ -34,7 +34,7 @@ TimeLine.prototype.initVis = function() {
     vis.xAxisCall = d3.axisBottom().ticks(5);
     vis.xAxis = vis.g.append('g')
         .attr('class', 'x axis')
-        .attr('transform', 'translate(' + vis.margin.left + ' ' + (vis.height + vis.margin.top) + ')');
+        .attr('transform', 'translate(' + 0 + ' ' + vis.height + ')');
 
     // Y Axis - don't draw
     vis.y = d3.scaleLinear()
@@ -95,8 +95,7 @@ TimeLine.prototype.updateVis = function() {
     vis.xAxisCall.scale(vis.x);
     vis.xAxis.transition(transTime2).call(vis.xAxisCall);
 
-    vis.y.domain([d3.min(callSums, function(d) { return d.sum; }),
-        d3.max(callSums, function(d) { return d.sum; })]);
+    vis.y.domain([0, d3.max(callSums, function(d) { return d.sum; })]);
 
     // stacked Area function
     vis.area = d3.area()

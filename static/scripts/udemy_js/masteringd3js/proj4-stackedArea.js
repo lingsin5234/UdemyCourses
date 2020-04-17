@@ -21,6 +21,8 @@ StackedArea.prototype.initVis = function() {
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
 
+    vis.colour = d3.scaleOrdinal(d3.schemePastel1);
+
     vis.svg = d3.select(vis.parentElement).append('svg')
         .attr('height', vis.svgHeight).attr('width', vis.svgWidth);
 
@@ -34,7 +36,7 @@ StackedArea.prototype.initVis = function() {
     vis.xAxisCall = d3.axisBottom().ticks(5);
     vis.xAxis = vis.g.append('g')
         .attr('class', 'x axis')
-        .attr('transform', 'translate(' + vis.margin.left + ' ' + (vis.height + vis.margin.top) + ')');
+        .attr('transform', 'translate(' + 0 + ' ' + vis.height + ')');
 
     // Y Axis
     vis.y = d3.scaleLinear()
@@ -43,13 +45,11 @@ StackedArea.prototype.initVis = function() {
     vis.yAxisCall = d3.axisLeft();
     vis.yAxis = vis.g.append('g')
         .attr('class', 'y axis')
-        .attr('transform', 'translate(' + vis.margin.left + ' ' + vis.margin.top + ')');
+        .attr('transform', 'translate(0 0)');
 
-    // Stack
-    vis.stack = d3.stack();
-
-    // Stacked Area
-    vis.areaPath = vis.g.append('path')
+    // Stack - set the keys (teams) here.
+    vis.stack = d3.stack()
+        .keys(["west", "south", "northeast", "midwest"]);
 
     vis.wrangleData();
 }
@@ -58,21 +58,78 @@ StackedArea.prototype.initVis = function() {
 StackedArea.prototype.wrangleData = function() {
     var vis = this;
 
+    vis.date1 = parseTime2($("#dateLabel1-proj4").text());
+    vis.date2 = parseTime2($("#dateLabel2-proj4").text());
+    vis.yVariable = $("#var-select-proj4").val()
+    //console.log(vis.date1, vis.date2, vis.yVariable)
+
+    // filter the dates, then map with date as key along with the variable value from all 4 teams
+    vis.data = d3.nest()
+        .key(function(d){ return formatTime2(d.date); })
+        .entries(allCalls.filter(function(d) {
+            return (d.date >= vis.date1 && d.date <= vis.date2);
+        })).map(function(d) {
+            return d.values.reduce(function(accumulator, current){
+                accumulator.date = d.key
+                // for EACH fo the teams, add the yVariable
+                accumulator[current.team] = accumulator[current.team] + current[vis.yVariable]
+                return accumulator;
+            }, {
+                // pass these to the function so that we only worry about "TEAMS" and not all variables
+                "northeast": 0,
+                "midwest": 0,
+                "south": 0,
+                "west": 0
+            })
+        })
+    //console.log(allCalls);
+    //console.log(vis.data);
+
     vis.updateVis();
 }
 
 // update visualization
 StackedArea.prototype.updateVis = function() {
+    var vis = this;
+
+    // Set Domains and Axes
+    vis.x.domain(d3.extent(vis.data, function(d) { return parseTime2(d.date); }));
+    vis.y.domain([0, d3.max(vis.data, function(d) {
+        // get arrays of totals -- excluding "date"
+        var vals = d3.keys(d).map(function(key) { return key !== 'date' ? d[key] : 0  })
+        //console.log(vals);
+        // then add them up, and d3.max will find the max
+        return d3.sum(vals);
+    }) * 1.005]);
+
+    vis.xAxisCall.scale(vis.x);
+    vis.yAxisCall.scale(vis.y);
+    vis.xAxis.transition(transTime2).call(vis.xAxisCall);
+    vis.yAxis.transition(transTime2).call(vis.yAxisCall);
 
     // Area
     vis.area = d3.area()
-        .x(function(d) { return vis.x(d.date); })
-        .y0(vis.height)
-        .y1(function(d) { return vis.y(d[vis.yVariable]); });
+        .x(function(d) { return vis.x(parseTime2(d.data.date)); })
+        .y0(function(d) { return vis.y(d[0]); })
+        .y1(function(d) { return vis.y(d[1]); });
 
-    // draw area
+    // use the vis.stack to sort data by the teams (keys)
+    vis.teams = vis.g.selectAll(".team")
+        .data(vis.stack(vis.data));
 
+    // Update the path for each team
+    vis.teams.select(".area")
+        .attr("d", vis.area)
 
-
-
+    //console.log(vis.area);
+    // append each group (path area) for each team
+    vis.teams.enter().append("g")
+        .attr("class", function(d){ return "team " + d.key })
+        .append("path")
+            .attr("class", "area")
+            .attr("d", vis.area)
+            .style("fill", function(d){
+                return vis.colour(d.key)
+            })
+            .style("fill-opacity", 0.9)
 }
