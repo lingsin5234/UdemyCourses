@@ -18,20 +18,20 @@ DonutChart2.prototype.initVis = function() {
     var vis = this;
 
     // dimensions
-    vis.margin = { left:90, right:30, top:30, bottom:0 };
+    vis.margin = { left:90, right:30, top:10, bottom:0 };
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
     vis.radius = Math.min(vis.width, vis.height) / 2;
 
     // this is where you get the parentElement
-    vis.svg3 = d3.select(vis.parentElement).append("svg")
+    vis.svg = d3.select(vis.parentElement).append("svg")
         .attr("width", vis.width + vis.margin.left + vis.margin.right)
         .attr("height", vis.height + vis.margin.top + vis.margin.bottom);
 
     vis.colour = d3.scaleOrdinal(d3.schemeAccent);
 
     // remember pie/donut charts use the center as origin; ignore margin cuz we want room for legend
-    vis.g = vis.svg3.append("g")
+    vis.g = vis.svg.append("g")
         .attr("transform", "translate(" + (vis.width/2) + " " + (vis.height/2 + vis.margin.top/2) + ")");
 
     // donut setup
@@ -41,18 +41,42 @@ DonutChart2.prototype.initVis = function() {
 		.sort(null);
 
 	vis.arc = d3.arc()
-		.innerRadius(vis.radius - 100)
-		.outerRadius(vis.radius - 50);
+		.innerRadius(vis.radius - 90)
+		.outerRadius(vis.radius - 60);
 
     // Graph Title
-    vis.svg3.append("text")
+    vis.svg.append("text")
         .attr("x", vis.width/2 + vis.margin.left)
-        .attr("y", 35)
+        .attr("y", 45)
         .attr("text-anchor", "middle")
-        .attr("font-size", "1.2em")
+        .attr("font-size", "1.5em")
         .text("Company Size");
 
-    // next, call the wrangleData()
+    // Legend
+    vis.legendGroup = vis.svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(" + (vis.width - vis.margin.left/2) + " " + vis.height/2 + ")");
+    vis.sizes = ["small", "medium", "large"];
+    vis.legend = vis.legendGroup.selectAll("g")
+        .data(vis.sizes).enter();
+
+    vis.legendBox = vis.legend.append("g")
+        .attr("transform", function(d,i) {
+            var str = "translate(0 " + (i*30 - 40) + ")"
+            return str;
+        });
+    vis.legendBox.append("rect")
+        //.attr("stroke", "#000")
+        //.attr("stroke-width", "2px")
+        .attr("height", 20).attr("width", 20)
+        .attr("fill", function(d) { return vis.colour(d); });
+
+    vis.legendBox.append("text")
+        .attr("text-anchor", "start")
+        .attr("font-size", "25px")
+        .attr("x", 25).attr("y", 18)
+        .text(function(d) { return capitalizeFirstLetter(d); });
+
     vis.wrangleData();
 }
 

@@ -18,6 +18,7 @@ $("#var-select-proj4").on("change", function() {
     updateGraphs();
 })
 
+// the brush action
 brushed2 = function() {
     var selection = d3.event.selection || timeline2.x.range();
     var newValues = selection.map(timeline2.x.invert);
@@ -31,6 +32,7 @@ brushed2 = function() {
     donutChart2.wrangleData();
 }
 
+// update all graphs
 updateGraphs = function() {
     timeline2.wrangleData();
     stackedArea.wrangleData();
@@ -40,6 +42,12 @@ updateGraphs = function() {
     donutChart2.wrangleData();
 }
 
+// capitalize First Letter
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+// main data call
 d3.json("/static/data/calls.json").then(function(data) {
 
     //console.log(data);
@@ -83,12 +91,12 @@ d3.json("/static/data/calls.json").then(function(data) {
     //console.log(callSums);
     //console.log(nestedCalls);
 
-    timeline2 = new TimeLine("#timeline", 200, 1200);
+    timeline2 = new TimeLine("#timeline", 205, 1200);
     stackedArea = new StackedArea("#stacked-area", 700, 1200);
     donutChart2 = new DonutChart2("#company-size", 300, 450);
-    barChart1 = new BarChart("#units-sold", 225, 450, "units_sold");
-    barChart2 = new BarChart("#revenue", 225, 450, "call_revenue");
-    barChart3 = new BarChart("#call-duration", 225, 450, "call_duration");
+    barChart1 = new BarChart("#units-sold", 235, 450, "units_sold");
+    barChart2 = new BarChart("#revenue", 235, 450, "call_revenue");
+    barChart3 = new BarChart("#call-duration", 235, 450, "call_duration");
 
 }).catch(function(error) { console.log(error); });
 

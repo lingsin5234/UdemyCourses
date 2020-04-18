@@ -29,11 +29,6 @@ BarChart.prototype.initVis = function() {
     vis.g = vis.svg.append("g")
         .attr("transform", "translate(" + vis.margin.left + " " + vis.margin.top + ")");
 
-    // capitalize First Letter
-    function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
     // X Axis
     vis.x = d3.scaleBand()
         .range([0, vis.width])
@@ -74,7 +69,7 @@ BarChart.prototype.initVis = function() {
     vis.g.append("text")
         .attr("transform", "translate(" + vis.width/2 + " -10)")
         .attr("text-anchor", "middle")
-        .attr("font-size", "1.2em")
+        .attr("font-size", "1.5em")
         .text(vis.yVariable == "units_sold" ? "Units Sold" :
             vis.yVariable == "call_revenue" ? "Call Revenue" : "Call Duration");
 

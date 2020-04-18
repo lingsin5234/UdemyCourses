@@ -48,8 +48,35 @@ StackedArea.prototype.initVis = function() {
         .attr('transform', 'translate(0 0)');
 
     // Stack - set the keys (teams) here.
+    vis.theTeams = ["west", "south", "northeast", "midwest"];
     vis.stack = d3.stack()
-        .keys(["west", "south", "northeast", "midwest"]);
+        .keys(vis.theTeams);
+
+    // Add Legend
+    vis.legendGroup = vis.svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", "translate(" + (vis.margin.left * 2) + " " + vis.margin.top/2 + ")");
+    vis.sizes = ["small", "medium", "large"];
+    vis.legend = vis.legendGroup.selectAll("g")
+        .data(vis.theTeams).enter();
+
+    vis.legendBox = vis.legend.append("g")
+        .attr("transform", function(d,i) {
+            var str = "translate(" + (i*250 + 50) + " 0)"
+            return str;
+        });
+    vis.legendBox.append("rect")
+        //.attr("stroke", "#000")
+        //.attr("stroke-width", "2px")
+        .attr("height", 20).attr("width", 20)
+        .attr("fill", function(d) { return vis.colour(d); });
+
+    vis.legendBox.append("text")
+        .attr("text-anchor", "start")
+        .attr("font-size", "20px")
+        .attr("x", 25).attr("y", 18)
+        .text(function(d) { return capitalizeFirstLetter(d); });
+
 
     vis.wrangleData();
 }
