@@ -17,7 +17,7 @@ StackedArea = function(_parentElement, _svgHeight, _svgWidth) {
 StackedArea.prototype.initVis = function() {
     var vis = this;
 
-    vis.margin = {top: 30, right: 90, bottom: 30, left: 60};
+    vis.margin = {top: 80, right: 70, bottom: 30, left: 70};
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
 
@@ -106,6 +106,8 @@ StackedArea.prototype.updateVis = function() {
     vis.yAxisCall.scale(vis.y);
     vis.xAxis.transition(transTime2).call(vis.xAxisCall);
     vis.yAxis.transition(transTime2).call(vis.yAxisCall);
+    vis.xAxis.selectAll("text").attr("font-size", "15px");
+    vis.yAxis.selectAll("text").attr("font-size", "15px");
 
     // Area
     vis.area = d3.area()

@@ -8,7 +8,7 @@ var allCalls = {};
 var callSums,
     nestedCalls;
 var timeline2,
-    stackedArea,
+    stackedArea, donutChart2,
     barChart1, barChart2, barChart3;
 var parseTime2 = d3.timeParse("%d/%m/%Y");
 var formatTime2 = d3.timeFormat("%d/%m/%Y");
@@ -28,6 +28,7 @@ brushed2 = function() {
     barChart1.wrangleData();
     barChart2.wrangleData();
     barChart3.wrangleData();
+    donutChart2.wrangleData();
 }
 
 updateGraphs = function() {
@@ -36,6 +37,7 @@ updateGraphs = function() {
     barChart1.wrangleData();
     barChart2.wrangleData();
     barChart3.wrangleData();
+    donutChart2.wrangleData();
 }
 
 d3.json("/static/data/calls.json").then(function(data) {
@@ -81,11 +83,12 @@ d3.json("/static/data/calls.json").then(function(data) {
     //console.log(callSums);
     //console.log(nestedCalls);
 
-    timeline2 = new TimeLine("#timeline", 250, 700);
-    stackedArea = new StackedArea("#stacked-area", 450, 700);
-    barChart1 = new BarChart("#units-sold", 300, 450, "units_sold");
-    barChart2 = new BarChart("#revenue", 300, 450, "call_revenue");
-    barChart3 = new BarChart("#call-duration", 300, 450, "call_duration");
+    timeline2 = new TimeLine("#timeline", 200, 1200);
+    stackedArea = new StackedArea("#stacked-area", 700, 1200);
+    donutChart2 = new DonutChart2("#company-size", 300, 450);
+    barChart1 = new BarChart("#units-sold", 225, 450, "units_sold");
+    barChart2 = new BarChart("#revenue", 225, 450, "call_revenue");
+    barChart3 = new BarChart("#call-duration", 225, 450, "call_duration");
 
 }).catch(function(error) { console.log(error); });
 

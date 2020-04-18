@@ -17,7 +17,7 @@ TimeLine = function(_parentElement, _svgHeight, _svgWidth) {
 TimeLine.prototype.initVis = function() {
     var vis = this
 
-    vis.margin = {top: 0, right: 100, bottom: 30, left: 60};
+    vis.margin = {top: 0, right: 70, bottom: 20, left: 70};
     vis.height = vis.svgHeight - vis.margin.top - vis.margin.bottom;
     vis.width = vis.svgWidth - vis.margin.left - vis.margin.right;
 
@@ -94,7 +94,7 @@ TimeLine.prototype.updateVis = function() {
     vis.x.domain(d3.extent(callSums, function(d) { return parseTime2(d.date); }));
     vis.xAxisCall.scale(vis.x);
     vis.xAxis.transition(transTime2).call(vis.xAxisCall);
-
+    vis.xAxis.selectAll("text").attr("font-size", "12px");
     vis.y.domain([0, d3.max(callSums, function(d) { return d.sum; })]);
 
     // stacked Area function

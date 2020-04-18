@@ -125,6 +125,8 @@ BarChart.prototype.updateVis = function() {
 
     vis.xAxis.call(vis.xAxisCall.scale(vis.x))
     vis.yAxis.transition(transTime2).call(vis.yAxisCall.scale(vis.y))
+    vis.xAxis.selectAll("text").attr("font-size", "15px");
+    vis.yAxis.selectAll("text").attr("font-size", "15px");
 
     // Add Y Axis Label
     //vis.yAxisLabel.text(vis.yVariable);
