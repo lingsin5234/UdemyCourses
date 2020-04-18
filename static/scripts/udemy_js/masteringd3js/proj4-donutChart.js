@@ -101,7 +101,7 @@ DonutChart2.prototype.wrangleData = function() {
                 count: s.values.length
             };
         })
-    console.log(vis.donutData);
+    //console.log(vis.donutData);
 
     vis.updateVis();
 }

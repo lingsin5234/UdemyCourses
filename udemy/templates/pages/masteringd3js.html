@@ -44,11 +44,19 @@
         }
     </style>
 
+    <!-- Project 1: Simple Bar Chart -->
     <div class="d-flex justify-content-center">
-        <p>Below are my projects that I worked on throughout the course. Project 1, a simple bar chart,
-            has been excluded but I have kept the labelling for those who have taken the course to follow.
-        </p>
-    </div>
+        <h3>Project 1: Revenue Comparison</h3>
+    </div><br>
+
+    <div class="d-flex justify-content-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-md-8" id="proj-1-chart"></div>
+            </div>
+        </div>
+    </div><br>
 
 
     <!-- heading -->
@@ -84,19 +92,17 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-10">
-                    <div id="proj-2-chart"></div>
-                </div>
+                <div id="proj-2-chart"></div>
             </div>
         </div>
     </div><br>
 
+
+    <!-- Third Project -->
     <div class="d-flex justify-content-center">
         <h3>Project 3: Cryptocurrency Chart</h3>
     </div><br>
 
-    <!-- Third Project -->
     <div class="d-flex justify-content-center">
         <div class="container">
             <div id="selections" class="row">
@@ -124,13 +130,11 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-11">
-                    <div id="proj-3-chart"></div>
-                </div>
+                <div id="proj-3-chart"></div>
             </div>
         </div>
     </div><br>
+
 
     <!-- Third Project Revised -->
     <div class="d-flex justify-content-center">
@@ -138,7 +142,7 @@
     </div><br>
 
     <div class="d-flex justify-content-center">
-        <div class="container">
+        <div class="container2">
             <div id="selections-e" class="row">
                 <div class="col-md-1"></div>
                 <div class="col-md-4">
@@ -174,7 +178,7 @@
     </div><br>
 
     <div class="d-flex justify-content-center">
-        <div class="container">
+        <div class="container2">
             <div id="selections-e2" class="row">
                 <div class="col-md-4">
                     <div id="slider-div-proj3-e2">
@@ -201,11 +205,11 @@
             </div>
             <div class="row">
                 <!-- it will auto-wrap since it is only 12 per "row" -->
-                <div class="col-md-8">
+                <div class="col-md-9">
                     <div id="line-chart-proj3-1"></div>
                     <div id="timeline-area"></div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div id="donut-chart-proj3-1"></div>
                     <div id="donut-chart-proj3-2"></div>
                 </div>
@@ -253,13 +257,14 @@
 
     <!-- Load the main d3.js file -->
     {% load static %}
-    <!--script src="{% static 'scripts/udemy_js/masteringd3js/proj2.js' %}"></script>
+    <script src="{% static 'scripts/udemy_js/masteringd3js/proj1.js' %}"></script>
+    <script src="{% static 'scripts/udemy_js/masteringd3js/proj2.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3original.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-lineChart.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-main.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-donutChart.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-timeline.js' %}"></script>
-    <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-revised2.js' %}"></script-->
+    <script src="{% static 'scripts/udemy_js/masteringd3js/proj3-revised2.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj4-timeline.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj4-stackedArea.js' %}"></script>
     <script src="{% static 'scripts/udemy_js/masteringd3js/proj4-barChart.js' %}"></script>

@@ -92,7 +92,7 @@ d3.json("/static/data/calls.json").then(function(data) {
     //console.log(nestedCalls);
 
     timeline2 = new TimeLine("#timeline", 205, 1200);
-    stackedArea = new StackedArea("#stacked-area", 700, 1200);
+    stackedArea = new StackedArea("#stacked-area", 710, 1200);
     donutChart2 = new DonutChart2("#company-size", 300, 450);
     barChart1 = new BarChart("#units-sold", 235, 450, "units_sold");
     barChart2 = new BarChart("#revenue", 235, 450, "call_revenue");
