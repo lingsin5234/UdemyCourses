@@ -1,1 +1,1 @@
-C:/Users/Sinto/Documents/vscodeworkspace/static/scripts/udemy_js/masteringd3js/proj2.js
+../../../../../../vscodeworkspace/static/scripts/udemy_js/masteringd3js/proj2.js
